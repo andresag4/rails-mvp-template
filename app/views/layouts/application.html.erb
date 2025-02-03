@@ -23,6 +23,12 @@
   </head>
 
   <body>
-    <%= yield %>
+  <%= render "layouts/header" %>
+    <main class="container mx-auto mt-8 px-5 flex justify-center">
+      <%= yield %>
+    </main>
+  <%= render "layouts/footer" %>
   </body>
 </html>
+
+

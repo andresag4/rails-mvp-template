@@ -2,13 +2,44 @@ name: CI
 
 on:
   pull_request:
+    branches:
+      - "**"
   push:
     branches: [ main ]
 
-jobs:
-  scan_ruby:
-    runs-on: ubuntu-latest
+env:
+  CI: true
+  APP_HOST: http://localhost
+  RSPEC_RETRY_RETRY_COUNT: 3
+  RAILS_ENV: test
 
+jobs:
+
+  linters:
+    name: Linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Setup Node
+        uses: actions/setup-node@v4
+      - name: Run RuboCop
+        run: bundle exec rubocop
+      - name: Run ERB Lint
+        run: bundle exec erb_lint --lint-all
+      - name: Run StandardJS
+        run: |
+          npm install standard --global
+          standard
+      - name: Run spell checker
+        uses: crate-ci/typos@master
+
+  ruby:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,17 +49,14 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
-  scan_js:
+  js:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -53,34 +81,63 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-  test:
+  security:
+    name: Security
     runs-on: ubuntu-latest
-
-    # services:
-    #  redis:
-    #    image: redis
-    #    ports:
-    #      - 6379:6379
-    #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git pkg-config google-chrome-stable
-
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run brakeman
+        run: |
+          bundle exec brakeman -w3
+      - name: Run bundler-audit
+        run: |
+          bundle exec bundle-audit check --update
 
+  code_quality:
+    name: Code quality
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name != 'main' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run rubycritic
+        run: |
+          bundle exec rubycritic --mode-ci main --no-browser
+      - name: Run database consistency
+        run: |
+          bundle exec rails db:test:prepare
+          bundle exec database_consistency -c .database_consistency.todo.yml
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
       - name: Run tests
         env:
           RAILS_ENV: test
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test test:system
-
+        run: bundle exec rspec
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capybara-screenshots
+          path: tmp/capybara
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
         if: failure()

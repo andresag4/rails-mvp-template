@@ -1,33 +1,29 @@
 source "https://rubygems.org"
 
+ruby "3.4.1"
+
 gem "rails", "~> 8.0.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
-gem "propshaft"
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 2.1"
+gem "bcrypt", "~> 3.1.7
+"
 
-gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
-# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-gem "turbo-rails"
-# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-gem "tailwindcss-rails"
-
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[windows jruby]
-
+gem "propshaft"
+gem "puma", ">= 5.0"
+# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
+gem "stimulus-rails"
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
+gem "sqlite3", ">= 2.1"
+# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
+gem "tailwindcss-rails"
+gem "turbo-rails"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -46,7 +42,7 @@ group :development, :test do
   gem "brakeman", require: false
   gem "bundler-audit", require: false
   gem "database_consistency"
-  gem "debug", platforms: %i[mri windows], require: "debug/prelude"
+  gem "debug", platforms: %i[mri], require: "debug/prelude"
   gem "dotenv"
   gem "erb_lint", require: false
   gem "factory_bot_rails"

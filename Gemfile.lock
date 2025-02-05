@@ -80,6 +80,7 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.2.0)
+    bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.1)
     benchmark (0.4.0)
     better_errors (2.10.1)
@@ -539,6 +540,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  bcrypt (~> 3.1.7)
   better_errors
   bootsnap
   brakeman
@@ -577,8 +579,10 @@ DEPENDENCIES
   tailwindcss-rails
   thruster
   turbo-rails
-  tzinfo-data
   web-console
 
+RUBY VERSION
+   ruby 3.4.1p0
+
 BUNDLED WITH
-   2.6.2
+   2.6.3

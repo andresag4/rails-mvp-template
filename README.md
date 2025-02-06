@@ -24,26 +24,28 @@ This is a free-to-use all-in-one Ruby on Rails app template.
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/yourusername/rails-mvp-template.git
-   cd rails-mvp-template```
+   git clone https://github.com/andresag4/rails-mvp-template.git
+   cd rails-mvp-template
+   ```
 
 2. Install dependencies:
-3. 
-```shell
-bundle install
-yarn install
-```
+	```shell
+	bundle install
+	yarn install
+	```
 
 3. Set up the database:
 
    ```shell
    rails db:create
-   rails db:migrate```
+   rails db:migrate
+   ```
    
 4. Start the server:
 
     ```shell
-bin/dev```
+    bin/dev
+    ```
 
 ## Running Tests
 
@@ -68,17 +70,3 @@ Feel free to submit issues and pull requests.
 
 ## License
 This project is licensed under the MIT License.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
